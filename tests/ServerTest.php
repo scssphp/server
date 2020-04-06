@@ -12,7 +12,7 @@
 namespace ScssPhp\Server\Tests;
 
 use PHPUnit\Framework\TestCase;
-use ScssPhp\ScssPhp\Server;
+use ScssPhp\Server\Server;
 
 /**
  * Server test
