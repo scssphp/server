@@ -9,7 +9,7 @@
  * @link http://scssphp.github.io/scssphp
  */
 
-namespace ScssPhp\ScssPhp\Tests;
+namespace ScssPhp\Server\Tests;
 
 use PHPUnit\Framework\TestCase;
 use ScssPhp\ScssPhp\Server;
