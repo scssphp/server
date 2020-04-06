@@ -9,7 +9,7 @@
  * @link http://scssphp.github.io/scssphp
  */
 
-namespace ScssPhp\ScssPhp;
+namespace ScssPhp\Server;
 
 use ScssPhp\ScssPhp\Compiler;
 use ScssPhp\ScssPhp\Exception\ServerException;

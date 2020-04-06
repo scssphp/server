@@ -1,7 +1,13 @@
 {
     "name": "scssphp/server",
     "description": "Server for on-the-fly .scss compilation",
-    "type": "project",
+    "type": "libary",
+    "autoload": {
+        "psr-4": { "ScssPhp\\Server\\": "src/" }
+    },
+    "autoload-dev": {
+        "psr-4": { "ScssPhp\\Server\\Tests\\": "tests/" }
+    },
     "require": {
         "scssphp/scssphp": "^1.0"
     },

@@ -8,7 +8,7 @@ a directory that you specify.
 Create a file, like `style.php`:
 
 ```
-use ScssPhp\ScssPhp\Server;
+use ScssPhp\Server\Server;
 
 $directory = "stylesheets";
 
@@ -59,7 +59,7 @@ Here's an example of creating a SCSS server that outputs compressed CSS:
 
 ```
 use ScssPhp\ScssPhp\Compiler;
-use ScssPhp\ScssPhp\Server;
+use ScssPhp\Server\Server;
 
 $scss = new Compiler();
 $scss->setFormatter('ScssPhp\ScssPhp\Formatter\Compressed');
