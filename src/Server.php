@@ -226,13 +226,37 @@ class Server
             $this->metadataName($out),
             serialize([
                 'etag'    => $etag,
-                'imports' => $result->getIncludedFiles(),
+                'imports' => $this->makeParsedFilesFromIncludeFiles($result->getIncludedFiles()),
                 'vars'    => crc32(serialize($this->scss->getVariables())),
             ])
         );
 
         return [$css, $etag];
     }
+
+
+    /**
+     * Adds to list of parsed files
+     *
+     * @internal
+     *
+     * @param array|null $paths
+     *
+     * @return array
+     */
+    protected function makeParsedFilesFromIncludeFiles($paths)
+    {
+        $parsedFiles = array();
+        if (!\is_null($paths) && !empty($paths)) {
+            foreach ($paths as $path) {
+                if (!\is_null($path) && is_file($path)) {
+                    $parsedFiles[realpath($path)] = filemtime($path);
+                }
+            }
+        }
+        return $parsedFiles;
+    }
+
 
     /**
      * Format error as a pseudo-element in CSS
@@ -297,7 +321,7 @@ class Server
         $compiled = $result->getCss();
 
         if (is_null($out)) {
-            return array('compiled' => $compiled, 'files' => $result->getIncludedFiles());
+            return array('compiled' => $compiled, 'files' => $this->makeParsedFilesFromIncludeFiles($result->getIncludedFiles()),);
         }
 
         return file_put_contents($out, $compiled);
