@@ -62,8 +62,9 @@ use ScssPhp\ScssPhp\Compiler;
 use ScssPhp\Server\Server;
 
 $scss = new Compiler();
-$scss->setFormatter('ScssPhp\ScssPhp\Formatter\Compressed');
+$scss->setOutputStyle(\ScssPhp\ScssPhp\OutputStyle::COMPRESSED);
 
 $server = new Server('stylesheets', null, $scss);
+
 $server->serve();
 ```

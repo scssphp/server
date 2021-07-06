@@ -9,7 +9,7 @@
         "psr-4": { "ScssPhp\\Server\\Tests\\": "tests/" }
     },
     "require": {
-        "scssphp/scssphp": "^1.0"
+        "scssphp/scssphp": "^1.5"
     },
     "require-dev": {
         "squizlabs/php_codesniffer": "~2.5",
