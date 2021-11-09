@@ -1,7 +1,7 @@
 {
     "name": "scssphp/server",
     "description": "Server for on-the-fly .scss compilation",
-    "type": "libary",
+    "type": "library",
     "autoload": {
         "psr-4": { "ScssPhp\\Server\\": "src/" }
     },
