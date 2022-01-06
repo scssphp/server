@@ -226,7 +226,7 @@ class Server
             $this->metadataName($out),
             serialize([
                 'etag'    => $etag,
-                'imports' => $this->makeParsedFilesFromIncludeFiles($result->getIncludedFiles()),
+                'imports' => $this->makeParsedFilesFromIncludeFiles(array_merge([$in], $result->getIncludedFiles())),
                 'vars'    => crc32(serialize($this->scss->getVariables())),
             ])
         );
@@ -321,7 +321,11 @@ class Server
         $compiled = $result->getCss();
 
         if (is_null($out)) {
-            return array('compiled' => $compiled, 'files' => $this->makeParsedFilesFromIncludeFiles($result->getIncludedFiles()),);
+            return array(
+                'compiled' => $compiled,
+                'files' => $this->makeParsedFilesFromIncludeFiles(array_merge([$in], $result->getIncludedFiles())),
+                'map' => $result->getSourceMap()
+            );
         }
 
         return file_put_contents($out, $compiled);
@@ -334,6 +338,8 @@ class Server
      * @param string $out Output file (.css)
      *
      * @return bool
+     *
+     * @throws \ScssPhp\Server\ServerException
      */
     public function checkedCompile($in, $out)
     {
@@ -431,7 +437,7 @@ class Server
      *
      * @return string Compiled CSS results
      *
-     * @throws \ScssPhp\ScssPhp\Exception\ServerException
+     * @throws \ScssPhp\Server\ServerException
      */
     public function checkedCachedCompile($in, $out, $force = false)
     {
@@ -472,6 +478,8 @@ class Server
      * @param boolean $force Force rebuild?
      *
      * @return array scssphp cache structure
+     *
+     * @throws \ScssPhp\Server\ServerException
      */
     public function cachedCompile($in, $force = false)
     {
@@ -498,7 +506,7 @@ class Server
             }
         } else {
             // TODO: Throw an exception? We got neither a string nor something
-            // that looks like a compatible lessphp cache structure.
+   			// that looks like a compatible scssphp cache structure.
             return null;
         }
 
@@ -522,6 +530,8 @@ class Server
      * @param string                         $dir      Root directory to .scss files
      * @param string                         $cacheDir Cache directory
      * @param \ScssPhp\ScssPhp\Compiler|null $scss     SCSS compiler instance
+     *
+     * @throws \ScssPhp\Server\ServerException
      */
     public function __construct($dir, $cacheDir = null, $scss = null)
     {
