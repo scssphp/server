@@ -166,11 +166,11 @@ class Server
     /**
      * Get If-Modified-Since header from client request
      *
-     * @return string|null
+     * @return string
      */
     protected function getIfModifiedSinceHeader()
     {
-        $modifiedSince = null;
+        $modifiedSince = '';
 
         if (isset($_SERVER['HTTP_IF_MODIFIED_SINCE'])) {
             $modifiedSince = $_SERVER['HTTP_IF_MODIFIED_SINCE'];
@@ -186,11 +186,11 @@ class Server
     /**
      * Get If-None-Match header from client request
      *
-     * @return string|null
+     * @return string
      */
     protected function getIfNoneMatchHeader()
     {
-        $noneMatch = null;
+        $noneMatch = '';
 
         if (isset($_SERVER['HTTP_IF_NONE_MATCH'])) {
             $noneMatch = $_SERVER['HTTP_IF_NONE_MATCH'];
