@@ -1,5 +1,4 @@
 <?php
-
 /**
  * SCSSPHP
  *
@@ -166,11 +165,11 @@ class Server
     /**
      * Get If-Modified-Since header from client request
      *
-     * @return string
+     * @return string|null
      */
     protected function getIfModifiedSinceHeader()
     {
-        $modifiedSince = '';
+        $modifiedSince = null;
 
         if (isset($_SERVER['HTTP_IF_MODIFIED_SINCE'])) {
             $modifiedSince = $_SERVER['HTTP_IF_MODIFIED_SINCE'];
@@ -186,11 +185,11 @@ class Server
     /**
      * Get If-None-Match header from client request
      *
-     * @return string
+     * @return string|null
      */
     protected function getIfNoneMatchHeader()
     {
-        $noneMatch = '';
+        $noneMatch = null;
 
         if (isset($_SERVER['HTTP_IF_NONE_MATCH'])) {
             $noneMatch = $_SERVER['HTTP_IF_NONE_MATCH'];
@@ -213,7 +212,6 @@ class Server
         $result  = $this->scss->compileString(file_get_contents($in), $in);
 
         $css = $result->getCss();
-
         $elapsed = round((microtime(true) - $start), 4);
 
         $v    = Version::VERSION;
@@ -233,7 +231,6 @@ class Server
 
         return [$css, $etag];
     }
-
 
     /**
      * Adds to list of parsed files
@@ -256,7 +253,6 @@ class Server
         }
         return $parsedFiles;
     }
-
 
     /**
      * Format error as a pseudo-element in CSS
@@ -321,7 +317,11 @@ class Server
         $compiled = $result->getCss();
 
         if (is_null($out)) {
-            return array('compiled' => $compiled, 'files' => $this->makeParsedFilesFromIncludeFiles(array_merge([$in], $result->getIncludedFiles())),);
+            return array(
+                'compiled' => $compiled,
+                'files' => $this->makeParsedFilesFromIncludeFiles(array_merge([$in], $result->getIncludedFiles())),
+                'map' => $result->getSourceMap()
+            );
         }
 
         return file_put_contents($out, $compiled);
@@ -334,6 +334,8 @@ class Server
      * @param string $out Output file (.css)
      *
      * @return bool
+     *
+     * @throws \ScssPhp\Server\ServerException
      */
     public function checkedCompile($in, $out)
     {
@@ -431,7 +433,7 @@ class Server
      *
      * @return string Compiled CSS results
      *
-     * @throws \ScssPhp\ScssPhp\Exception\ServerException
+     * @throws \ScssPhp\Server\ServerException
      */
     public function checkedCachedCompile($in, $out, $force = false)
     {
@@ -472,6 +474,8 @@ class Server
      * @param boolean $force Force rebuild?
      *
      * @return array scssphp cache structure
+     *
+     * @throws \ScssPhp\Server\ServerException
      */
     public function cachedCompile($in, $force = false)
     {
@@ -495,10 +499,14 @@ class Server
                         break;
                     }
                 }
+//                if (!file_exists($in['root']) or filemtime($in['root']) > $in['updated']) {
+//                    // The main file has changed so we should compile.
+//                    $root = $in['root'];
+//                }
             }
         } else {
             // TODO: Throw an exception? We got neither a string nor something
-            // that looks like a compatible lessphp cache structure.
+   			// that looks like a compatible scssphp cache structure.
             return null;
         }
 
@@ -522,6 +530,8 @@ class Server
      * @param string                         $dir      Root directory to .scss files
      * @param string                         $cacheDir Cache directory
      * @param \ScssPhp\ScssPhp\Compiler|null $scss     SCSS compiler instance
+     *
+     * @throws \ScssPhp\Server\ServerException
      */
     public function __construct($dir, $cacheDir = null, $scss = null)
     {
@@ -545,6 +555,8 @@ class Server
         $this->scss = $scss;
         $this->showErrorsAsCSS = false;
 
-        date_default_timezone_set('UTC');
+        if (!ini_get('date.timezone') && function_exists('date_default_timezone_set')) { // PHP >= 5.1.0
+            date_default_timezone_set('UTC');
+        }
     }
 }
